@@ -37,6 +37,18 @@ public class StandaloneCleanupCycler {
         world.getPlayers().forEach(plr -> plr.sendMessage(component2text(warningText("1 minute"))));
     }
 
+    public void broadcast(Component message) {
+        world.getPlayers().forEach(plr -> plr.sendMessage(component2text(message)));
+    }
+
+    public void cycleWarn2() {
+        broadcast(warningText("30 seconds"));
+    }
+
+    public void cleanupEntities() {
+        mod.executeCommand(world, "execute in %s run kill @e[type=item]".formatted(world.getRegistryKey().toString()));
+    }
+
     private Component warningText(String remaining) {
         return text()
                 .append(text("Warning: ").color(GOLD))
