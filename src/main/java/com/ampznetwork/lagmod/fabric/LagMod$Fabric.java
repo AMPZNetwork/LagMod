@@ -1,5 +1,6 @@
 package com.ampznetwork.lagmod.fabric;
 
+import com.ampznetwork.lagmod.fabric.config.Config;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -29,6 +30,7 @@ import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*
 @Slf4j(topic = LagMod$Fabric.AddonName)
 public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopping, CommandRegistrationCallback {
     public static final String AddonName = "LagMod";
+    public static final String AddonId = "lagmod";
 
     public static Text component2text(Component component) {
         return Text.Serializer.fromJson(gson().serialize(component));
@@ -36,6 +38,7 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
 
     private final     ScheduledExecutorService             scheduler = Executors.newScheduledThreadPool(2);
     private final     Map<String, StandaloneCleanupCycler> cyclers   = new ConcurrentHashMap<>();
+    private final Config config = Config.createAndLoad();
     private @NonFinal MinecraftServer                      server;
 
     @Override
