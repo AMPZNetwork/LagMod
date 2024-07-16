@@ -89,6 +89,13 @@ dependencies {
         include project("$prefix:japi")
     else include 'org.comroid:japi:+'
 
+    include(modImplementation('net.kyori:adventure-api:4.11.+'))
+    include(modImplementation('net.kyori:adventure-text-serializer-gson:4.11.+'))
+
+    // lombok
+    api 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:+'
+
     // owo lib
     modImplementation "io.wispforest:owo-lib:${project.owo_version}"
     include "io.wispforest:owo-sentinel:${project.owo_version}"
