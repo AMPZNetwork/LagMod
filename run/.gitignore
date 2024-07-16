@@ -1,0 +1,6 @@
+*.*
+
+!.gitignore
+!eula.txt
+#!server.properties
+!config/lagMod-config.json5
