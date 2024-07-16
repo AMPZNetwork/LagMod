@@ -34,7 +34,7 @@ public class StandaloneCleanupCycler {
     }
 
     public void cycleWarn1() {
-        mod.getServer().getPlayerManager().broadcast(component2text(warningText("1 minute")), false);
+        world.getPlayers().forEach(plr -> plr.sendMessage(component2text(warningText("1 minute"))));
     }
 
     private Component warningText(String remaining) {
