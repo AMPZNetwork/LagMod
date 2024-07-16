@@ -15,10 +15,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.TypeFilter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,14 +62,26 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
         dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("cleanup")
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("items")
                         .requires(Permissions.require("lagmod.cleanup.items"))
-                        .executes(ctx -> {
-                            var world  = ctx.getSource().getWorld().getRegistryKey().toString();
-                            var cycler = cyclers.get(world);
-                            cycler.cleanupItems();
-                            cycler.resetTimer();
-                            ctx.getSource().sendMessage(component2text(text("The cleanup timer has been reset").color(NamedTextColor.AQUA)));
-                            return Command.SINGLE_SUCCESS;
-                        })));
+                        .executes(cleanupCommand()))
+                .then(LiteralArgumentBuilder.<ServerCommandSource>literal("mobs")
+                        .requires(Permissions.require("lagmod.cleanup.mobs"))
+                        .executes(cleanupCommand()))
+                .then(LiteralArgumentBuilder.<ServerCommandSource>literal("animals")
+                        .requires(Permissions.require("lagmod.cleanup.animals"))
+                        .executes(cleanupCommand(EntityType.ITEM))));
+    }
+
+    private Command<ServerCommandSource> cleanupCommand(TypeFilter<Entity, ItemEntity> filter) {
+        return ctx -> {
+            var world  = ctx.getSource().getWorld().getRegistryKey().toString();
+            var cycler = cyclers.get(world);
+            cycler.cleanup(filter);
+            if (filter == EntityType.ITEM) {
+                cycler.resetTimer();
+                ctx.getSource().sendMessage(component2text(text("The cleanup timer has been reset").color(NamedTextColor.AQUA)));
+            }
+            return Command.SINGLE_SUCCESS;
+        }
     }
 
     @Override

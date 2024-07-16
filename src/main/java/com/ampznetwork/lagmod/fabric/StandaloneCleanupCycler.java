@@ -7,8 +7,10 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -56,12 +58,12 @@ public class StandaloneCleanupCycler {
 
     public void cycleWarn2() {
         broadcast(warningText("30 seconds"));
-        countdown = mod.getScheduler().schedule(this::cleanupItems, 30, TimeUnit.SECONDS);
+        countdown = mod.getScheduler().schedule(() -> cleanup(EntityType.ITEM), 30, TimeUnit.SECONDS);
     }
 
-    public void cleanupItems() {
+    public void cleanup(TypeFilter<Entity, ItemEntity> entityType) {
         long c = 0;
-        for (var item : world.getEntitiesByType(EntityType.ITEM, Box.of(Vec3d.ZERO, 60_000_000, 1000, 60_000_000), this::applyItemFilter)) {
+        for (var item : world.getEntitiesByType(entityType, Box.of(Vec3d.ZERO, 60_000_000, 1000, 60_000_000), this::applyItemFilter)) {
             item.kill();
             c += 1;
         }
