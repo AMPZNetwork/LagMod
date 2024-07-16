@@ -41,8 +41,8 @@ tasks.register('serverJar', Copy) {
 }
 
 tasks.register('testMod', Copy) {
-    dependsOn clean, remapJar
-    from remapJar.outputs.files.singleFile
+    dependsOn clean, remappedShadowJar
+    from remappedShadowJar.outputs.files.singleFile
     into "${projectDir}/run/mods"
     rename { n -> "LagMod-fabric.jar" }
 }
@@ -86,8 +86,8 @@ dependencies {
 
     // lagMod
     if (findProject("$prefix:japi") != null)
-        include project("$prefix:japi")
-    else include 'org.comroid:japi:+'
+        implementation project("$prefix:japi")
+    else implementation 'org.comroid:japi:+'
 
     include(modImplementation('net.kyori:adventure-api:4.11.+'))
     include(modImplementation('net.kyori:adventure-text-serializer-gson:4.11.+'))
@@ -148,7 +148,14 @@ publishing {
 }
 
 shadowJar {
-    //dependsOn project("$prefix:api").simplifyArtifact
+    dependencies {
+        if (findProject("$prefix:japi") != null)
+            include project("$prefix:japi")
+        else include 'org.comroid:japi:+'
+        include dependency('net.kyori:adventure-api:4.11.+')
+        include dependency('net.kyori:adventure-text-serializer-gson:4.11.+')
+        include dependency('net.kyori:examination-api:1.3.+')
+    }
 }
 
 task simplifyArtifact(type: Copy) {
