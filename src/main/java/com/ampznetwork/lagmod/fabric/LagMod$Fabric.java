@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -52,7 +53,10 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
     public void register(
             CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment
     ) {
-        dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("cleanup-items").executes(ctx -> {
+        dispatcher.register(LiteralArgumentBuilder
+                .<ServerCommandSource>literal("cleanup-items")
+                .requires(Permissions.require("lagmod.cleanup.items"))
+                .executes(ctx -> {
             var world = ctx.getSource().getWorld().getRegistryKey().toString();
             cyclers.get(world).cleanupEntities();
             return Command.SINGLE_SUCCESS;
