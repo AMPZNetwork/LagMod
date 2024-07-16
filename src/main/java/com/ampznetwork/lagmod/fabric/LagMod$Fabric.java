@@ -2,9 +2,7 @@ package com.ampznetwork.lagmod.fabric;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContextBuilder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.NonFinal;
@@ -16,14 +14,8 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,49 +69,5 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
     @Override
     public void onServerStopping(MinecraftServer server) {
         scheduler.shutdown();
-    }
-
-    public void executeCommand(World world, String command) {
-        var mgr = server.getCommandManager();
-        var out = new CommandOutput() {
-            @Override
-            public void sendMessage(Text message) {
-                log.info(message.getString());
-            }
-
-            @Override
-            public boolean shouldReceiveFeedback() {
-                return false;
-            }
-
-            @Override
-            public boolean shouldTrackOutput() {
-                return false;
-            }
-
-            @Override
-            public boolean shouldBroadcastConsoleToOps() {
-                return false;
-            }
-        };
-        var parse = getParseResults((ServerWorld) world, out, mgr);
-        mgr.execute(parse, command);
-    }
-
-    private @NotNull ParseResults<ServerCommandSource> getParseResults(ServerWorld world, CommandOutput out, CommandManager mgr) {
-        var src = new ServerCommandSource(out,
-                Vec3d.ZERO,
-                Vec2f.ZERO,
-                world,
-                0,
-                LagMod$Fabric.AddonName,
-                Text.of(LagMod$Fabric.AddonName),
-                server,
-                null);
-        return new ParseResults<>(new CommandContextBuilder<>(
-                mgr.getDispatcher(),
-                src,
-                mgr.getDispatcher().getRoot(),
-                0));
     }
 }
