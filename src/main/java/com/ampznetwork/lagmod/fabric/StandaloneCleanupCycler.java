@@ -5,6 +5,9 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.concurrent.ScheduledFuture;
@@ -28,8 +31,7 @@ public class StandaloneCleanupCycler {
     }
 
     private void startCleanupCycle() {
-        if (world.getPlayers().isEmpty())
-            return;
+        if (world.getPlayers().isEmpty()) return;
         mod.getScheduler().schedule(this::cycleWarn1, 0, TimeUnit.SECONDS);
         mod.getScheduler().schedule(this::cycleWarn2, 30, TimeUnit.SECONDS);
         mod.getScheduler().schedule(this::cleanupEntities, 1, TimeUnit.MINUTES);
@@ -43,19 +45,26 @@ public class StandaloneCleanupCycler {
         world.getPlayers().forEach(plr -> plr.sendMessage(component2text(message)));
     }
 
+    public void cleanupEntities() {
+        long c = 0;
+        for (var item : world.getEntitiesByType(EntityType.ITEM, Box.of(Vec3d.ZERO, 60_000_000, 1000, 60_000_000), $ -> true)) {
+            item.kill();
+            c += 1;
+        }
+        broadcast(text()
+                .append(text("Removed ").color(AQUA))
+                .append(text(c).color(GREEN))
+                .append(text(" items").color(AQUA))
+                .build());
+    }
+
     public void cycleWarn2() {
         broadcast(warningText("30 seconds"));
     }
 
-    public void cleanupEntities() {
-        mod.executeCommand(world, "execute in %s run kill @e[type=item]".formatted(world.getRegistryKey().toString()));
-    }
-
     private Component warningText(String remaining) {
-        return text()
-                .append(text("Warning: ").color(GOLD))
+        return text().append(text("Warning: ").color(GOLD))
                 // dont ask me why the fuck i have to qualify the class in the next call
-                .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW))
-                .build();
+                .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW)).build();
     }
 }
