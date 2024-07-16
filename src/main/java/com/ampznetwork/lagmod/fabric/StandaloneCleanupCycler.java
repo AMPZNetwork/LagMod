@@ -27,33 +27,36 @@ public class StandaloneCleanupCycler {
     World         world;
     Config config;
     @NonFinal ScheduledFuture<?> recurring;
+    @NonFinal ScheduledFuture<?> countdown;
 
     public StandaloneCleanupCycler(LagMod$Fabric mod, World world) {
-        this.mod       = mod;
-        this.world     = world;
-        this.config    = mod.getConfig();
-        this.recurring = mod.getScheduler().scheduleAtFixedRate(this::startCleanupCycle, 1, config.intervalMinutes(), TimeUnit.MINUTES);
+        this.mod    = mod;
+        this.world  = world;
+        this.config = mod.getConfig();
+
+        resetTimer();
+    }
+
+    public void resetTimer() {
+        if (recurring != null) recurring.cancel(true);
+        if (countdown != null) countdown.cancel(true);
+
+        this.recurring = mod.getScheduler().scheduleAtFixedRate(this::startCleanupCycle, config.intervalMinutes(), config.intervalMinutes(), TimeUnit.MINUTES);
     }
 
     private void startCleanupCycle() {
         if (world.getPlayers().isEmpty()) return;
-        mod.getScheduler().schedule(this::cycleWarn1, 0, TimeUnit.SECONDS);
-        mod.getScheduler().schedule(this::cycleWarn2, 30, TimeUnit.SECONDS);
-        mod.getScheduler().schedule(this::cleanupItems, 1, TimeUnit.MINUTES);
+        cycleWarn1();
+        countdown = mod.getScheduler().schedule(this::cycleWarn2, 30, TimeUnit.SECONDS);
     }
 
     public void cycleWarn1() {
         broadcast(warningText("1 minute"));
     }
 
-    public void broadcast(Component message) {
-        world.getPlayers().forEach(plr -> plr.sendMessage(component2text(message)));
-    }
-
-    private Component warningText(String remaining) {
-        return text().append(text("Warning: ").color(GOLD))
-                // dont ask me why the fuck i have to qualify the class in the next call
-                .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW)).build();
+    public void cycleWarn2() {
+        broadcast(warningText("30 seconds"));
+        countdown = mod.getScheduler().schedule(this::cleanupItems, 30, TimeUnit.SECONDS);
     }
 
     public void cleanupItems() {
@@ -69,15 +72,21 @@ public class StandaloneCleanupCycler {
                 .build());
     }
 
+    public void broadcast(Component message) {
+        world.getPlayers().forEach(plr -> plr.sendMessage(component2text(message)));
+    }
+
+    private Component warningText(String remaining) {
+        return text().append(text("Warning: ").color(GOLD))
+                // dont ask me why the fuck i have to qualify the class in the next call
+                .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW)).build();
+    }
+
     private boolean applyItemFilter(ItemEntity item) {
         var key = item.getStack().getItem().toString();
         var idx = key.indexOf(':');
         if (idx != -1) key = key.substring(idx + 1);
         var result = config.itemList().contains(key);
         return (config.itemListMode() == ListMode.whitelist) == result;
-    }
-
-    public void cycleWarn2() {
-        broadcast(warningText("30 seconds"));
     }
 }

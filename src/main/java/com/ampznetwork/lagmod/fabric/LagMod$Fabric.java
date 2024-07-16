@@ -13,6 +13,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
 
 @Getter
@@ -60,6 +62,8 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
                             var world  = ctx.getSource().getWorld().getRegistryKey().toString();
                             var cycler = cyclers.get(world);
                             cycler.cleanupItems();
+                            cycler.resetTimer();
+                            ctx.getSource().sendMessage(component2text(text("The cleanup timer has been reset").color(NamedTextColor.AQUA)));
                             return Command.SINGLE_SUCCESS;
                         })));
     }
