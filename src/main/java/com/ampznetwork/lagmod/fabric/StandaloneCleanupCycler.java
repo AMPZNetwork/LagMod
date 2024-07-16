@@ -28,13 +28,15 @@ public class StandaloneCleanupCycler {
     }
 
     private void startCleanupCycle() {
+        if (world.getPlayers().isEmpty())
+            return;
         mod.getScheduler().schedule(this::cycleWarn1, 0, TimeUnit.SECONDS);
         mod.getScheduler().schedule(this::cycleWarn2, 30, TimeUnit.SECONDS);
         mod.getScheduler().schedule(this::cleanupEntities, 1, TimeUnit.MINUTES);
     }
 
     public void cycleWarn1() {
-        world.getPlayers().forEach(plr -> plr.sendMessage(component2text(warningText("1 minute"))));
+        broadcast(warningText("1 minute"));
     }
 
     public void broadcast(Component message) {
@@ -55,13 +57,5 @@ public class StandaloneCleanupCycler {
                 // dont ask me why the fuck i have to qualify the class in the next call
                 .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW))
                 .build();
-    }
-
-    public void cycleWarn2() {
-        mod.getServer().getPlayerManager().broadcast(component2text(warningText("30 seconds")), false);
-    }
-
-    private void cleanupEntities() {
-        mod.executeCommand(world, "execute in %s run kill @e[type=item]".formatted(world.getRegistryKey().toString()));
     }
 }
