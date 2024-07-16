@@ -39,7 +39,7 @@ public class StandaloneCleanupCycler {
         if (world.getPlayers().isEmpty()) return;
         mod.getScheduler().schedule(this::cycleWarn1, 0, TimeUnit.SECONDS);
         mod.getScheduler().schedule(this::cycleWarn2, 30, TimeUnit.SECONDS);
-        mod.getScheduler().schedule(this::cleanupEntities, 1, TimeUnit.MINUTES);
+        mod.getScheduler().schedule(this::cleanupItems, 1, TimeUnit.MINUTES);
     }
 
     public void cycleWarn1() {
@@ -56,7 +56,7 @@ public class StandaloneCleanupCycler {
                 .append(text("All dropped items will be removed in " + remaining).color(NamedTextColor.YELLOW)).build();
     }
 
-    public void cleanupEntities() {
+    public void cleanupItems() {
         long c = 0;
         for (var item : world.getEntitiesByType(EntityType.ITEM, Box.of(Vec3d.ZERO, 60_000_000, 1000, 60_000_000), this::applyItemFilter)) {
             item.kill();

@@ -53,14 +53,15 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
     public void register(
             CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment
     ) {
-        dispatcher.register(LiteralArgumentBuilder
-                .<ServerCommandSource>literal("cleanup-items")
-                .requires(Permissions.require("lagmod.cleanup.items"))
-                .executes(ctx -> {
-            var world = ctx.getSource().getWorld().getRegistryKey().toString();
-            cyclers.get(world).cleanupEntities();
-            return Command.SINGLE_SUCCESS;
-        }));
+        dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("cleanup")
+                .then(LiteralArgumentBuilder.<ServerCommandSource>literal("items")
+                        .requires(Permissions.require("lagmod.cleanup.items"))
+                        .executes(ctx -> {
+                            var world  = ctx.getSource().getWorld().getRegistryKey().toString();
+                            var cycler = cyclers.get(world);
+                            cycler.cleanupItems();
+                            return Command.SINGLE_SUCCESS;
+                        })));
     }
 
     @Override
