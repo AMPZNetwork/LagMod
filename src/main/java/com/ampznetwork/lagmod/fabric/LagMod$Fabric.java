@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson;
 
 @Getter
 @NoArgsConstructor
@@ -55,7 +55,7 @@ public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.Serv
     public void register(
             CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment
     ) {
-        dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("cleanup")
+        dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("cleanup-entities")
                 .then(LiteralArgumentBuilder.<ServerCommandSource>literal("items")
                         .requires(Permissions.require("lagmod.cleanup.items"))
                         .executes(ctx -> {
