@@ -88,6 +88,8 @@ dependencies {
         implementation project("$prefix:japi")
     else implementation 'org.comroid:japi:+'
 
+    include(project(':LibMod:fabric'))
+
     include(modImplementation('net.kyori:adventure-api:4.11.+'))
     include(modImplementation('net.kyori:adventure-text-serializer-gson:4.11.+'))
 
