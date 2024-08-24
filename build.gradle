@@ -11,7 +11,7 @@ ext {
     prefix = ""
 }
 
-group = project.maven_group
+group = project.maven_group + '.lagmod'
 
 base {
     archivesName = project.archives_base_name
