@@ -16,7 +16,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.ampznetwork.lagmod.fabric.LagMod$Fabric"
+      "com.ampznetwork.lagmod.fabric.LagModFabric"
     ]
   },
   "depends": {
