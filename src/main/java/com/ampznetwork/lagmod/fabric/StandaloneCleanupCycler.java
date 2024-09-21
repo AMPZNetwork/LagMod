@@ -13,18 +13,18 @@ import net.minecraft.world.World;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.ampznetwork.lagmod.fabric.LagMod$Fabric.*;
+import static com.ampznetwork.lagmod.fabric.LagModFabric.*;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @Value
-@Slf4j(topic = LagMod$Fabric.AddonName)
+@Slf4j(topic = LagModFabric.AddonName)
 public class StandaloneCleanupCycler {
-    LagMod$Fabric mod;
-    World         world;
+    LagModFabric mod;
+    World        world;
     @NonFinal ScheduledFuture<?> recurring;
 
-    public StandaloneCleanupCycler(LagMod$Fabric mod, World world) {
+    public StandaloneCleanupCycler(LagModFabric mod, World world) {
         this.mod       = mod;
         this.world     = world;
         this.recurring = mod.getScheduler().scheduleAtFixedRate(this::startCleanupCycle, 1, 30, TimeUnit.MINUTES);
