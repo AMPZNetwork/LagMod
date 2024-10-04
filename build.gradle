@@ -11,7 +11,7 @@ ext {
     prefix = ""
 }
 
-group = project.maven_group
+group = project.maven_group + '.lagmod'
 
 base {
     archivesName = project.archives_base_name
@@ -53,7 +53,6 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-    maven { url 'https://maven.wispforest.io/releases' }
     mavenCentral()
 }
 
@@ -89,17 +88,14 @@ dependencies {
         implementation project("$prefix:japi")
     else implementation 'org.comroid:japi:+'
 
+    include(project(':LibMod:fabric'))
+
     include(modImplementation('net.kyori:adventure-api:4.11.+'))
     include(modImplementation('net.kyori:adventure-text-serializer-gson:4.11.+'))
 
     // lombok
     api 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:+'
-
-    // owo lib
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -112,8 +108,8 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

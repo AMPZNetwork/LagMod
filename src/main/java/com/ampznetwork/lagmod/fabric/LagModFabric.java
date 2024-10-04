@@ -26,8 +26,8 @@ import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*
 
 @Getter
 @NoArgsConstructor
-@Slf4j(topic = LagMod$Fabric.AddonName)
-public class LagMod$Fabric implements ModInitializer, ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopping, CommandRegistrationCallback {
+@Slf4j(topic = LagModFabric.AddonName)
+public class LagModFabric implements ModInitializer, ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.ServerStopping, CommandRegistrationCallback {
     public static final String AddonName = "LagMod";
 
     public static Text component2text(Component component) {
