@@ -141,7 +141,7 @@ publishing {
     }
 }
 
-shadowJar {
+shadowJar { setProperty("zip64",true)
     dependencies {
         include project("$prefix:japi")
 
