@@ -82,7 +82,7 @@ dependencies {
     //include(modImplementation('me.lucko:fabric-permissions-api:0.3.1'))
 
     // lagMod
-    implementation project("$prefix:japi")
+    implementation 'org.comroid:japi:+'
 
     include(project(':LibMod:fabric'))
 
@@ -141,7 +141,7 @@ publishing {
 
 shadowJar { setProperty("zip64",true)
     dependencies {
-        include project("$prefix:japi")
+        include 'org.comroid:japi:+'
 
         include dependency('net.kyori:adventure-api:4.11.0')
         include dependency('net.kyori:adventure-key:4.11.0')
